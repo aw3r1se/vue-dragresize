@@ -10,8 +10,7 @@ npm i @aw3r1se/vue-dragresize
 
 ```vue
 <script>
-  import { useDragResize } from '@aw3r1se/vue-dragresize';
-  import Resizers from '@aw3r1se/vue-dragresize';
+  import { useDragResize, Resizers } from '@aw3r1se/vue-dragresize';
 
   const {
     geom,
