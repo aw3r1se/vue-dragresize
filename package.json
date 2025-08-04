@@ -1,5 +1,5 @@
 {
-  "name": "vue-dragresize",
+  "name": "@aw3r1se/vue-dragresize",
   "version": "0.0.1",
   "description": "Drag and resize vue-component",
   "main": "./src/useDragResize.js",

@@ -1,17 +1,17 @@
-# MacOS Traffic Lights Vue Component
+# Drag and resize vue-component
 
 ## 🔧 Installation
 
 ```sh
-npm i vue-dragresize
+npm i @aw3r1se/vue-dragresize
 ```
 
 ## ✏️ Usage
 
 ```vue
 <script>
-  import { useDragResize } from 'vue-drag-resize';
-  import Resizers from 'vue-drag-resize';
+  import { useDragResize } from '@aw3r1se/vue-dragresize';
+  import Resizers from '@aw3r1se/vue-dragresize';
 
   const {
     geom,
