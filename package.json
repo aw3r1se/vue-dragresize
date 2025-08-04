@@ -1,8 +1,8 @@
 {
   "name": "@aw3r1se/vue-dragresize",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Drag and resize vue-component",
-  "main": "./src/index.js",
+  "module": "./src/index.js",
   "files": ["src"],
   "sideEffects": false,
   "repository": {
