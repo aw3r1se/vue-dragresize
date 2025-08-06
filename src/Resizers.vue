@@ -81,7 +81,11 @@ function start(dir, e) {
         width: calc(var(--spacing) * 2);
     }
 
-    .h-w {
+    .h-2 {
         height: calc(var(--spacing) * 2);
+    }
+
+    :root {
+      --spacing: .25rem;
     }
 </style>
