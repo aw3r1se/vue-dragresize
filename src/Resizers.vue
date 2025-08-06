@@ -47,3 +47,7 @@ function start(dir, e) {
         />
     </template>
 </template>
+
+<style>
+    @import 'tailwindcss';
+</style>
