@@ -17,14 +17,14 @@ const dirs = [
 const classes = (dir) => {
     const base = 'w-2 h-2';
     switch (dir) {
-    case 'top-left':     return `${base} cursor-nw-resize top-0 left-0`;
-    case 'top':          return 'h-2 left-2 right-2 cursor-ns-resize top-0';
-    case 'top-right':    return `${base} cursor-ne-resize top-0 right-0`;
-    case 'right':        return 'w-2 top-2 bottom-2 cursor-ew-resize right-0';
-    case 'bottom-right': return `${base} cursor-nw-resize bottom-0 right-0`;
-    case 'bottom':       return 'h-2 left-2 right-2 cursor-ns-resize bottom-0';
-    case 'bottom-left':  return `${base} cursor-ne-resize bottom-0 left-0`;
-    case 'left':         return 'w-2 top-2 bottom-2 cursor-ew-resize left-0';
+    case 'top-left':     return `${base} cursor-nw-resize top-0 left-0 z-10`;
+    case 'top':          return 'h-2 left-2 right-2 cursor-ns-resize top-0 w-full z-5';
+    case 'top-right':    return `${base} cursor-ne-resize top-0 right-0 z-10`;
+    case 'right':        return 'w-2 top-2 bottom-2 cursor-ew-resize right-0 h-full z-5';
+    case 'bottom-right': return `${base} cursor-nw-resize bottom-0 right-0 z-10`;
+    case 'bottom':       return 'h-2 left-2 right-2 cursor-ns-resize bottom-0 w-full z-5';
+    case 'bottom-left':  return `${base} cursor-ne-resize bottom-0 left-0 z-10`;
+    case 'left':         return 'w-2 top-2 bottom-2 cursor-ew-resize left-0 h-full z-5';
     default:             return '';
     }
 };
@@ -41,7 +41,7 @@ function start(dir, e) {
     >
         <div
             v-show="props.show"
-            class="absolute z-10 bg-transparent"
+            class="absolute bg-transparent"
             :class="classes(dir)"
             @mousedown.prevent="(e) => start(dir, e)"
         />
@@ -55,6 +55,10 @@ function start(dir, e) {
 
     .z-10 {
         z-index: 10;
+    }
+
+    .z-5 {
+      z-index: 5;
     }
 
     .bg-transparent {
@@ -83,6 +87,14 @@ function start(dir, e) {
 
     .h-2 {
         height: calc(var(--spacing) * 2);
+    }
+
+    .w-full {
+      width: 100%;
+    }
+
+    .h-full {
+      height: 100%;
     }
 
     :root {
