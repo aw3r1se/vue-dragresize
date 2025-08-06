@@ -49,5 +49,39 @@ function start(dir, e) {
 </template>
 
 <style>
-    @import 'tailwindcss';
+    .absolute {
+        position: absolute;
+    }
+
+    .z-10 {
+        z-index: 10;
+    }
+
+    .bg-transparent {
+        background-color: transparent;
+    }
+
+    .top-0 {
+        top: calc(var(--spacing) * 0);
+    }
+
+    .left-0 {
+        left: calc(var(--spacing) * 0);
+    }
+
+    .right-0 {
+        right: calc(var(--spacing) * 0);
+    }
+
+    .bottom-0 {
+        bottom: calc(var(--spacing) * 0);
+    }
+
+    .w-2 {
+        width: calc(var(--spacing) * 2);
+    }
+
+    .h-w {
+        height: calc(var(--spacing) * 2);
+    }
 </style>
