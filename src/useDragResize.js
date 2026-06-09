@@ -1,10 +1,10 @@
 import { reactive, computed, onMounted, onBeforeUnmount } from 'vue';
 
 export function useDragResize(options = {}) {
-    const minSize  = options.minSize  ?? 200;
-    const marginPx = options.marginPx ?? 10;
-    const stepPx = options.stepPx ?? 12;   // шаг сетки в пикселях
-    const animMs   = options.animMs   ?? 250;
+    const minSize  = options.minSize  ?? 200;  // minimum width/height in px
+    const marginPx = options.marginPx ?? 10;   // viewport padding kept around the box
+    const stepPx   = options.stepPx   ?? 12;   // resize grid step in px
+    const animMs   = options.animMs   ?? 250;  // maximize/restore animation duration
 
     const geom = reactive({ w: 0, h: 0, x: 0, y: 0 });
     const flags = reactive({
@@ -26,9 +26,11 @@ export function useDragResize(options = {}) {
             : 'none',
     }));
 
+    let animTimer = null;
     const startAnim = () => {
         flags.isAnimating = true;
-        setTimeout(() => (flags.isAnimating = false), animMs);
+        clearTimeout(animTimer);
+        animTimer = setTimeout(() => { flags.isAnimating = false; }, animMs);
     };
 
     const clampToViewport = () => {
@@ -38,10 +40,12 @@ export function useDragResize(options = {}) {
         geom.w = flags.isMax ? maxW : Math.min(Math.max(geom.w, minSize), maxW);
         geom.h = flags.isMax ? maxH : Math.min(Math.max(geom.h, minSize), maxH);
 
+        // Keep at least `marginPx` of the box visible on every edge.
         geom.x = Math.min(Math.max(geom.x, -geom.w + marginPx), maxW - marginPx);
         geom.y = Math.min(Math.max(geom.y, -geom.h + marginPx), maxH - marginPx);
     };
 
+    // Shared gesture state (drag and resize never run at the same time).
     let startMouse = { x: 0, y: 0 };
     let startPos   = { x: 0, y: 0 };
     let startSize  = { w: 0, h: 0 };
@@ -50,11 +54,10 @@ export function useDragResize(options = {}) {
     const beginDrag = (e) => {
         flags.isDragging = true;
         startMouse = { x: e.clientX, y: e.clientY };
-        startPos   = { x: geom.x,   y: geom.y };
+        startPos   = { x: geom.x,    y: geom.y };
     };
 
     const doDrag = (e) => {
-        if (!flags.isDragging) return;
         flags.isMax = false;
         geom.x = startPos.x + (e.clientX - startMouse.x);
         geom.y = startPos.y + (e.clientY - startMouse.y);
@@ -71,8 +74,6 @@ export function useDragResize(options = {}) {
     };
 
     const doResize = (e) => {
-        if (!flags.isResizing) return;
-
         const dx = e.clientX - startMouse.x;
         const dy = e.clientY - startMouse.y;
 
@@ -84,9 +85,11 @@ export function useDragResize(options = {}) {
         if (currentHandle.includes('bottom')) h += dy;
         if (currentHandle.includes('top'))    h -= dy;
 
+        // Snap to the grid, never below the minimum size.
         w = Math.max(minSize, Math.round(w / stepPx) * stepPx);
         h = Math.max(minSize, Math.round(h / stepPx) * stepPx);
 
+        // When dragging a top/left handle the opposite edge stays anchored.
         let x = startPos.x;
         let y = startPos.y;
         if (currentHandle.includes('left')) x = startPos.x + (startSize.w - w);
@@ -95,6 +98,11 @@ export function useDragResize(options = {}) {
         Object.assign(geom, { w, h, x, y });
         flags.isMax = false;
         clampToViewport();
+    };
+
+    const onMouseMove = (e) => {
+        if (flags.isDragging) doDrag(e);
+        else if (flags.isResizing) doResize(e);
     };
 
     const stopActions = () => {
@@ -111,6 +119,7 @@ export function useDragResize(options = {}) {
         const maxH = window.innerHeight - marginPx * 2;
 
         if (flags.isMax) {
+            // Restore: reuse the previous geometry, or center a half-size box.
             if (!savedGeom) {
                 const halfW = Math.max(minSize, Math.floor(maxW / 2));
                 const halfH = Math.max(minSize, Math.floor(maxH / 2));
@@ -125,6 +134,7 @@ export function useDragResize(options = {}) {
             }
             flags.isMax = false;
         } else {
+            // Maximize: remember the current geometry first.
             savedGeom = { ...geom };
             Object.assign(geom, { w: maxW, h: maxH, x: 0, y: 0 });
             flags.isMax = true;
@@ -133,15 +143,14 @@ export function useDragResize(options = {}) {
 
     onMounted(() => {
         clampToViewport();
-        window.addEventListener('mousemove', doDrag);
-        window.addEventListener('mousemove', doResize);
+        window.addEventListener('mousemove', onMouseMove);
         window.addEventListener('mouseup',   stopActions);
         window.addEventListener('resize',    clampToViewport);
     });
 
     onBeforeUnmount(() => {
-        window.removeEventListener('mousemove', doDrag);
-        window.removeEventListener('mousemove', doResize);
+        clearTimeout(animTimer);
+        window.removeEventListener('mousemove', onMouseMove);
         window.removeEventListener('mouseup',   stopActions);
         window.removeEventListener('resize',    clampToViewport);
     });

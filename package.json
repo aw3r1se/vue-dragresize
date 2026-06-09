@@ -1,6 +1,6 @@
 {
   "name": "@aw3r1se/vue-dragresize",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Drag and resize vue-component",
   "module": "./src/index.js",
   "files": ["src"],
@@ -15,11 +15,13 @@
   "keywords": [
     "drag",
     "resize",
-    "svg",
     "vue"
   ],
-  "author": "aw3r1se",
-  "license": "GPL-3.0",
+  "author": {
+    "name": "Bogdan Koch",
+    "email": "aw3r1se@gmail.com"
+  },
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/aw3r1se/vue-dragresize/issues"
   }

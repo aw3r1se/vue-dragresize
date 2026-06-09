@@ -1,33 +1,16 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue';
-
-const props = defineProps({
+defineProps({
     show: { type: Boolean, default: true },
 });
 
 const emit = defineEmits(['resize-start']);
 
-const dirs = [
+const handles = [
     'top-left', 'top', 'top-right',
     'right',
     'bottom-right', 'bottom', 'bottom-left',
     'left',
 ];
-
-const classes = (dir) => {
-    const base = 'w-2 h-2';
-    switch (dir) {
-    case 'top-left':     return `${base} cursor-nw-resize top-0 left-0 z-10`;
-    case 'top':          return 'h-2 left-2 right-2 cursor-ns-resize top-0 w-full z-5';
-    case 'top-right':    return `${base} cursor-ne-resize top-0 right-0 z-10`;
-    case 'right':        return 'w-2 top-2 bottom-2 cursor-ew-resize right-0 h-full z-5';
-    case 'bottom-right': return `${base} cursor-nw-resize bottom-0 right-0 z-10`;
-    case 'bottom':       return 'h-2 left-2 right-2 cursor-ns-resize bottom-0 w-full z-5';
-    case 'bottom-left':  return `${base} cursor-ne-resize bottom-0 left-0 z-10`;
-    case 'left':         return 'w-2 top-2 bottom-2 cursor-ew-resize left-0 h-full z-5';
-    default:             return '';
-    }
-};
 
 function start(dir, e) {
     emit('resize-start', e, dir);
@@ -35,69 +18,55 @@ function start(dir, e) {
 </script>
 
 <template>
-    <template
-        v-for="dir in dirs"
+    <div
+        v-for="dir in handles"
+        v-show="show"
         :key="dir"
-    >
-        <div
-            v-show="props.show"
-            class="absolute bg-transparent"
-            :class="classes(dir)"
-            @mousedown.prevent="(e) => start(dir, e)"
-        />
-    </template>
+        class="vdr-handle"
+        :class="`vdr-${dir}`"
+        @mousedown.prevent="start(dir, $event)"
+    />
 </template>
 
-<style>
-    .absolute {
-        position: absolute;
-    }
+<style scoped>
+.vdr-handle {
+    position: absolute;
+    background-color: transparent;
+}
 
-    .z-10 {
-        z-index: 10;
-    }
+/* Corners */
+.vdr-top-left,
+.vdr-top-right,
+.vdr-bottom-right,
+.vdr-bottom-left {
+    width: 8px;
+    height: 8px;
+    z-index: 10;
+}
 
-    .z-5 {
-      z-index: 5;
-    }
+/* Edges */
+.vdr-top,
+.vdr-bottom {
+    left: 8px;
+    right: 8px;
+    height: 8px;
+    z-index: 5;
+}
 
-    .bg-transparent {
-        background-color: transparent;
-    }
+.vdr-left,
+.vdr-right {
+    top: 8px;
+    bottom: 8px;
+    width: 8px;
+    z-index: 5;
+}
 
-    .top-0 {
-        top: calc(var(--spacing) * 0);
-    }
-
-    .left-0 {
-        left: calc(var(--spacing) * 0);
-    }
-
-    .right-0 {
-        right: calc(var(--spacing) * 0);
-    }
-
-    .bottom-0 {
-        bottom: calc(var(--spacing) * 0);
-    }
-
-    .w-2 {
-        width: calc(var(--spacing) * 2);
-    }
-
-    .h-2 {
-        height: calc(var(--spacing) * 2);
-    }
-
-    .w-full {
-      width: 100%;
-    }
-
-    .h-full {
-      height: 100%;
-    }
-
-    :root {
-      --spacing: .25rem;
-    }
+.vdr-top-left     { top: 0;    left: 0;  cursor: nwse-resize; }
+.vdr-top          { top: 0;              cursor: ns-resize; }
+.vdr-top-right    { top: 0;    right: 0; cursor: nesw-resize; }
+.vdr-right        { right: 0;            cursor: ew-resize; }
+.vdr-bottom-right { bottom: 0; right: 0; cursor: nwse-resize; }
+.vdr-bottom       { bottom: 0;           cursor: ns-resize; }
+.vdr-bottom-left  { bottom: 0; left: 0;  cursor: nesw-resize; }
+.vdr-left         { left: 0;             cursor: ew-resize; }
 </style>
